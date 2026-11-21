@@ -54,11 +54,17 @@ minikube service web-app-service -n web-app --url
 
 ## Prueba del HPA
 
+El generador de carga está en `pruebas/` (fuera de `k8s/`, así que Argo CD no lo gestiona):
+
 ```powershell
-kubectl run load-generator -n web-app --image=busybox:1.36 --restart=Never -- /bin/sh -c "while true; do wget -q -O- http://web-app-service; done"
+kubectl apply -f pruebas/load-generator.yml
 kubectl get hpa -n web-app -w
-kubectl delete pod load-generator -n web-app   # al parar la carga, vuelve a 2 réplicas
+kubectl delete -f pruebas/load-generator.yml   # al parar la carga, vuelve a 2 réplicas
 ```
+
+## Informe
+
+El informe con las capturas de la ejecución está en `informe/` (Word y PDF).
 
 ## Nota sobre réplicas y HPA
 
