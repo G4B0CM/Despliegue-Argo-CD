@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-app
+  labels:
+    app: web-app
+    tier: frontend
+spec:
+  # Réplicas iniciales. A partir de aquí el HPA decide (min 2 / max 5);
+  # Argo CD ignora este campo para no pelear con el autoscaler.
+  replicas: 2
+  selector:
+    matchLabels:
+      app: web-app
+  template:
+    metadata:
+      labels:
+        app: web-app
+        tier: frontend
+    spec:
+      containers:
+        - name: web-app
+          # Servidor web Apache + PHP que hace un cálculo intensivo por petición:
+          # imagen oficial de Kubernetes pensada para probar el HPA.
+          image: registry.k8s.io/hpa-example:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 80
+          env:
+            - name: APP_VERSION
+              value: "v1"
+          resources:
+            requests:
+              cpu: 100m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 128Mi
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10

@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-app-service
+  labels:
+    app: web-app
+spec:
+  type: NodePort
+  # Asocia el servicio con los Pods que tienen la etiqueta app=web-app
+  selector:
+    app: web-app
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80          # puerto del Service dentro del clúster
+      targetPort: http  # puerto 80 del contenedor (nombre definido en el Deployment)
+      nodePort: 30080   # puerto expuesto en el nodo (rango 30000-32767)
