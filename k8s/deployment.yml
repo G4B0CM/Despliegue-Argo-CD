@@ -17,6 +17,7 @@ spec:
       labels:
         app: web-app
         tier: frontend
+        version: v2
     spec:
       containers:
         - name: web-app
@@ -29,7 +30,7 @@ spec:
               containerPort: 80
           env:
             - name: APP_VERSION
-              value: "v1"
+              value: "v2"
           resources:
             requests:
               cpu: 100m
